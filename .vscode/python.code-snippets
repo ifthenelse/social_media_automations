@@ -1,0 +1,67 @@
+{
+    "GitHub API Request": {
+        "prefix": "gh-request",
+        "body": [
+            "response = requests.${1|get,post,put,delete|}('${2:url}', headers=self.headers${3:, json=data})",
+            "if response.status_code == ${4:200}:",
+            "    ${5:# Success}",
+            "    $0",
+            "else:",
+            "    print(f'Error: {response.status_code} - {response.text}')"
+        ],
+        "description": "GitHub API request template"
+    },
+    "GitHub Rate Limiting": {
+        "prefix": "gh-rate-limit",
+        "body": [
+            "# Rate limiting to respect GitHub API limits",
+            "time.sleep(${1:0.1})"
+        ],
+        "description": "Add rate limiting for GitHub API calls"
+    },
+    "GitHub Error Handling": {
+        "prefix": "gh-error",
+        "body": [
+            "try:",
+            "    response.raise_for_status()",
+            "    ${1:# Process successful response}",
+            "except requests.exceptions.RequestException as e:",
+            "    print(f'API request failed: {e}')",
+            "    ${2:return None}"
+        ],
+        "description": "GitHub API error handling template"
+    },
+    "Environment Variable": {
+        "prefix": "gh-env",
+        "body": [
+            "${1:VARIABLE_NAME} = os.getenv('${2:VARIABLE_NAME}', '${3:default_value}')"
+        ],
+        "description": "Load environment variable with default"
+    },
+    "GitHub Token Header": {
+        "prefix": "gh-headers",
+        "body": [
+            "headers = {",
+            "    'Authorization': f'token {${1:token}}',",
+            "    'Accept': 'application/vnd.github.v3+json'",
+            "}"
+        ],
+        "description": "GitHub API headers template"
+    },
+    "Python Class Method": {
+        "prefix": "py-method",
+        "body": [
+            "def ${1:method_name}(self${2:, param}):",
+            "    \"\"\"${3:Method description}.",
+            "    ",
+            "    Args:",
+            "        ${4:param}: ${5:Parameter description}",
+            "        ",
+            "    Returns:",
+            "        ${6:Return type}: ${7:Return description}",
+            "    \"\"\"",
+            "    ${0:pass}"
+        ],
+        "description": "Python method with docstring"
+    }
+}

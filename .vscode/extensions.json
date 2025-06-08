@@ -1,0 +1,33 @@
+{
+    "recommendations": [
+        // Core Python Development - Essential for this project
+        "ms-python.python",
+        "ms-python.debugpy",
+        "ms-python.flake8",
+        "ms-python.black-formatter",
+        "ms-python.isort",
+        "ms-python.vscode-pylance",
+        // GitHub Integration - For GitHub API development
+        "github.vscode-pull-request-github",
+        // Environment & Configuration - For .env files
+        "mikestead.dotenv",
+        // Code Quality & Documentation
+        "njpwerner.autodocstring",
+        "ms-vscode.vscode-json",
+        // Markdown (for README files)
+        "yzhang.markdown-all-in-one",
+        // Build Tools - For Makefile support
+        "ms-vscode.makefile-tools"
+    ],
+    "unwantedRecommendations": [
+        // Disable conflicting Python extensions
+        "ms-python.pylint",
+        "ms-python.autopep8",
+        // Disable other language extensions that might interfere
+        "ms-vscode.cpptools",
+        "ms-dotnettools.csharp",
+        "golang.go",
+        "rust-lang.rust-analyzer",
+        "ms-vscode.vscode-typescript-next"
+    ]
+}

@@ -1,0 +1,41 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug GitHub Star Cleanup",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/github_star_cleanup/github_star_cleanup.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/github_star_cleanup",
+            "envFile": "${workspaceFolder}/github_star_cleanup/.env",
+            "python": "${workspaceFolder}/github_star_cleanup/venv/bin/python",
+            "args": [],
+            "stopOnEntry": false,
+            "justMyCode": true
+        },
+        {
+            "name": "Debug with Custom Args",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/github_star_cleanup/github_star_cleanup.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/github_star_cleanup",
+            "envFile": "${workspaceFolder}/github_star_cleanup/.env",
+            "python": "${workspaceFolder}/github_star_cleanup/venv/bin/python",
+            "args": [
+                "${input:customArgs}"
+            ],
+            "stopOnEntry": false,
+            "justMyCode": true
+        }
+    ],
+    "inputs": [
+        {
+            "id": "customArgs",
+            "description": "Enter custom arguments",
+            "default": "",
+            "type": "promptString"
+        }
+    ]
+}
