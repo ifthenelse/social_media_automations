@@ -23,4 +23,4 @@ fi
 # Activate virtual environment and run the script
 echo "🚀 Running GitHub Star Cleanup..."
 source venv/bin/activate
-python github_star_cleanup_clean.py
+python github_star_cleanup.py
