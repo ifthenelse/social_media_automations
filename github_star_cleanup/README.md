@@ -27,11 +27,17 @@ A Python script to automatically unstar GitHub repositories that have been inact
 ### Configuration
 
 1. Create a GitHub Personal Access Token:
-   - Go to GitHub Settings > Developer settings > Personal access tokens
-   - Generate a new token with `user` scope (for reading/writing starred repositories)
-2. Update the script:
-   - Replace `'your_github_token_here'` in the `main()` function with your actual token
-   - Or set it as an environment variable (see Environment Variables section)
+   - Go to [GitHub Settings > Developer settings > Personal access tokens](https://github.com/settings/tokens)
+   - Click "Generate new token" → "Generate new token (classic)"
+   - **Required scopes**:
+     - ✅ **`user`** - Access to user profile information and starred repositories
+     - ✅ **`public_repo`** - Required to star/unstar public repositories
+     - ✅ **`repo`** - (Optional) Only needed if you want to unstar private repositories
+   - Copy the generated token
+
+2. Configure the token:
+   - Create a `.env` file with your token (recommended - see Environment Variables section)
+   - Or replace `'your_github_token_here'` in the script with your actual token
 
 ### Environment Variables (Recommended)
 
@@ -69,6 +75,26 @@ You can modify the `years_threshold` parameter in the `main()` function to chang
 - **Confirmation prompt**: The script asks for confirmation before unstarring repositories
 - **Rate limiting**: Includes delays between API calls to respect GitHub's rate limits
 - **Error handling**: Gracefully handles API errors and network issues
+
+## Troubleshooting
+
+### Permission Errors (403/404)
+
+If you get permission errors or "Not Found" errors when trying to unstar repositories:
+
+1. **Check your token scopes**: The token must have `public_repo` scope
+   - Run the script to see current scopes: `🔑 Token scopes: gist, public_repo, user`
+   - If missing `public_repo`, create a new token with the correct permissions
+
+2. **Fine-grained vs Classic tokens**:
+   - **Classic tokens** (recommended): Select `user` + `public_repo` scopes
+   - **Fine-grained tokens**: Grant "Starring: Write" permission under Account permissions
+
+### Common Issues
+
+- **"Resource not accessible by personal access token"**: Token missing `public_repo` scope
+- **Repository appears starred but unstar fails**: Usually a permissions issue
+- **Rate limiting**: The script includes built-in delays, but heavy usage may hit limits
 
 ## API Rate Limits
 

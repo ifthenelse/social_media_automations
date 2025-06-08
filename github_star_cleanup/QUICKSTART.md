@@ -21,8 +21,11 @@ make setup
 1. Get a GitHub Personal Access Token:
 
    - Go to [GitHub Settings > Developer settings > Personal access tokens](https://github.com/settings/tokens)
-   - Click "Generate new token" (classic)
-   - Select the `user` scope (to read/write starred repositories)
+   - Click "Generate new token" → "Generate new token (classic)"
+   - **Required scopes**:
+     - ✅ **`user`** - Access to user profile and starred repositories
+     - ✅ **`public_repo`** - Required to star/unstar public repositories
+     - ✅ **`repo`** - (Optional) Only needed for private repositories
    - Copy the generated token
 
 2. Add your token to the `.env` file:
@@ -81,6 +84,29 @@ make lint
 ## ⚙️ Customization
 
 To change the inactivity threshold, edit the `years_threshold` parameter in the script or modify the `main()` function.
+
+## 🔧 Troubleshooting
+
+### Token Permission Issues
+
+If you see errors like "Permission denied" or "Not Found" when unstarring:
+
+1. **Verify token scopes**: The script will show your scopes when validating:
+   ```
+   🔑 Token scopes: gist, public_repo, user
+   ```
+
+2. **Missing `public_repo` scope**: This is the most common issue
+   - Create a new token with both `user` and `public_repo` scopes
+   - Fine-grained tokens need "Starring: Write" permission
+
+3. **Classic vs Fine-grained tokens**:
+   - **Classic tokens** (recommended): Easier to configure, select `user` + `public_repo`
+   - **Fine-grained tokens**: More complex, need specific "Starring" permissions
+
+### Quick Test
+
+The script automatically validates your token and shows any permission issues before starting the cleanup.
 
 ## 🔒 Safety Features
 
