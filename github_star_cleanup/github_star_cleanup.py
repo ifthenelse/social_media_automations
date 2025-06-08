@@ -26,11 +26,12 @@ def load_env_file():
 
 
 class GitHubStarManager:
-    """Manages GitHub starred repositories and provides cleanup functionality."""
+    """Manages GitHub starred repositories and provides cleanup functionality.
+    """
 
     def __init__(self, token):
         """Initialize the GitHub API client.
-        
+
         Args:
             token (str): GitHub personal access token
         """
@@ -43,65 +44,71 @@ class GitHubStarManager:
 
     def validate_token_permissions(self):
         """Validate that the token has the necessary permissions.
-        
+
         Returns:
             tuple: (is_valid, error_message)
         """
         # First, check if we can access the user endpoint
         url = f'{self.base_url}/user'
         response = requests.get(url, headers=self.headers)
-        
+
         if response.status_code != 200:
             try:
                 error_details = response.json()
-                return False, f"Token validation failed: {error_details.get('message', 'Unknown error')}"
-            except:
-                return False, f"Token validation failed: HTTP {response.status_code}"
-        
+                error_msg = error_details.get('message', 'Unknown error')
+                return False, f"Token validation failed: {error_msg}"
+            except requests.exceptions.JSONDecodeError:
+                return False, (f"Token validation failed: HTTP "
+                               f"{response.status_code}")
+
         user_data = response.json()
-        print(f"✅ Token is valid for user: {user_data.get('login', 'Unknown')}")
-        
+        user_login = user_data.get('login', 'Unknown')
+        print(f"✅ Token is valid for user: {user_login}")
+
         # Check token scopes (if available in headers)
         scopes = response.headers.get('X-OAuth-Scopes', '')
         if scopes:
             print(f"🔑 Token scopes: {scopes}")
-            
+
             # Check if we have the necessary scopes
             scope_list = [s.strip() for s in scopes.split(',')]
-            if 'user' not in scope_list and 'public_repo' not in scope_list and 'repo' not in scope_list:
-                return False, f"Token missing required scopes. Has: [{scopes}] but needs: 'user' or 'repo'"
+            required_scopes = ['user', 'public_repo', 'repo']
+            if not any(scope in scope_list for scope in required_scopes):
+                return False, (f"Token missing required scopes. "
+                               f"Has: [{scopes}] but needs: 'user' or 'repo'")
         else:
-            print("🔑 Token scopes not available in response (fine-grained token)")
-        
+            print("🔑 Token scopes not available in response "
+                  "(fine-grained token)")
+
         return True, "Token validation successful"
 
     def test_star_permissions(self, test_repo=None):
         """Test if we can actually star/unstar repositories.
-        
+
         Args:
             test_repo (dict): Optional repository to test with
-            
+
         Returns:
             bool: True if permissions work, False otherwise
         """
         if not test_repo:
             print("⚠️  No test repository provided, skipping permission test")
             return True
-        
+
         owner = test_repo['owner']['login']
         repo_name = test_repo['name']
-        
+
         print(f"🧪 Testing star/unstar permissions on {owner}/{repo_name}...")
-        
+
         # Check if already starred
         check_url = f'{self.base_url}/user/starred/{owner}/{repo_name}'
         print(f"   Debug: Testing URL: {check_url}")
         check_response = requests.get(check_url, headers=self.headers)
         print(f"   Debug: GET response: {check_response.status_code}")
         was_starred = check_response.status_code == 204
-        
+
         if was_starred:
-            print(f"   Repository is currently starred")
+            print("   Repository is currently starred")
             # Try to unstar temporarily
             unstar_response = requests.delete(check_url, headers=self.headers)
             if unstar_response.status_code == 204:
@@ -112,23 +119,26 @@ class GitHubStarManager:
                     print("   ✅ Re-star test successful")
                     return True
                 else:
-                    print(f"   ❌ Re-star failed: {star_response.status_code}")
+                    print(f"   ❌ Re-star failed: "
+                          f"{star_response.status_code}")
                     return False
             else:
-                print(f"   ❌ Unstar test failed: {unstar_response.status_code}")
+                print(f"   ❌ Unstar test failed: "
+                      f"{unstar_response.status_code}")
                 try:
                     error_details = unstar_response.json()
-                    print(f"      Error: {error_details.get('message', 'Unknown error')}")
-                except:
+                    error_msg = error_details.get('message', 'Unknown error')
+                    print(f"      Error: {error_msg}")
+                except requests.exceptions.JSONDecodeError:
                     pass
                 return False
         else:
-            print(f"   Repository is currently not starred, skipping test")
+            print("   Repository is currently not starred, skipping test")
             return True
 
     def get_starred_repos(self):
         """Get all starred repositories for the authenticated user.
-        
+
         Returns:
             list: List of starred repository data from GitHub API
         """
@@ -156,11 +166,11 @@ class GitHubStarManager:
 
     def is_recently_active(self, repo, years_threshold=5):
         """Check if repository was active within the specified years.
-        
+
         Args:
             repo (dict): Repository data from GitHub API
             years_threshold (int): Number of years to consider as threshold
-            
+
         Returns:
             bool: True if repository is recently active, False otherwise
         """
@@ -179,11 +189,11 @@ class GitHubStarManager:
 
     def unstar_repo(self, owner, repo_name):
         """Remove star from a repository.
-        
+
         Args:
             owner (str): Repository owner/organization
             repo_name (str): Repository name
-            
+
         Returns:
             str: "success", "not_found", "permission_denied", or "error"
         """
@@ -194,7 +204,8 @@ class GitHubStarManager:
             print(f'✅ Successfully unstarred: {owner}/{repo_name}')
             return "success"
         elif response.status_code == 404:
-            print(f'ℹ️  Repository not found (likely deleted/moved): {owner}/{repo_name}')
+            print(f'ℹ️  Repository not found (likely deleted/moved): '
+                  f'{owner}/{repo_name}')
             return "not_found"
         elif response.status_code == 403:
             # Enhanced error reporting for permission issues
@@ -203,60 +214,29 @@ class GitHubStarManager:
                 error_details = response.json()
                 if 'message' in error_details:
                     error_msg += f' - {error_details["message"]}'
-            except:
+            except requests.exceptions.JSONDecodeError:
                 pass
             print(error_msg)
             return "permission_denied"
         else:
             # Enhanced error reporting for other issues
-            error_msg = f'❌ Failed to unstar {owner}/{repo_name}: {response.status_code}'
+            error_msg = (f'❌ Failed to unstar {owner}/{repo_name}: '
+                         f'{response.status_code}')
             try:
                 error_details = response.json()
                 if 'message' in error_details:
                     error_msg += f' - {error_details["message"]}'
-            except:
+            except requests.exceptions.JSONDecodeError:
                 # If response isn't JSON, just show the text
                 if response.text.strip():
                     error_msg += f' - {response.text.strip()}'
-            
-            print(error_msg)
-            return "error"
 
-        if response.status_code == 204:
-            print(f'✅ Successfully unstarred: {owner}/{repo_name}')
-            return "success"
-        elif response.status_code == 404:
-            print(f'ℹ️  Repository not found (likely deleted/moved): {owner}/{repo_name}')
-            return "not_found"
-        elif response.status_code == 403:
-            # Enhanced error reporting for permission issues
-            error_msg = f'❌ Permission denied for {owner}/{repo_name}'
-            try:
-                error_details = response.json()
-                if 'message' in error_details:
-                    error_msg += f' - {error_details["message"]}'
-            except:
-                pass
-            print(error_msg)
-            return "permission_denied"
-        else:
-            # Enhanced error reporting for other issues
-            error_msg = f'❌ Failed to unstar {owner}/{repo_name}: {response.status_code}'
-            try:
-                error_details = response.json()
-                if 'message' in error_details:
-                    error_msg += f' - {error_details["message"]}'
-            except:
-                # If response isn't JSON, just show the text
-                if response.text.strip():
-                    error_msg += f' - {response.text.strip()}'
-            
             print(error_msg)
             return "error"
 
     def remove_stars_from_inactive_repos(self, years_threshold=5):
         """Main method to remove stars from inactive repositories.
-        
+
         Args:
             years_threshold (int): Years of inactivity threshold
         """
@@ -266,7 +246,7 @@ class GitHubStarManager:
         if not is_valid:
             print(f"❌ {error_msg}")
             return False
-        
+
         print("Fetching starred repositories...")
         starred_repos = self.get_starred_repos()
         print(f"Found {len(starred_repos)} starred repositories")
@@ -286,7 +266,7 @@ class GitHubStarManager:
 
         # Confirm before proceeding
         prompt = (f"Do you want to unstar {len(inactive_repos)} "
-                 f"repositories? (y/N): ")
+                  f"repositories? (y/N): ")
         confirm = input(prompt)
         if confirm.lower() != 'y':
             print("Operation cancelled.")
@@ -298,7 +278,7 @@ class GitHubStarManager:
         permission_denied_count = 0
         failed_repos = []
         not_found_repos = []
-        
+
         for repo in inactive_repos:
             owner = repo['owner']['login']
             repo_name = repo['name']
@@ -324,23 +304,27 @@ class GitHubStarManager:
         print(f"Successfully processed {total_processed} repositories:")
         print(f"  • Unstarred: {unstarred_count}")
         print(f"  • Already deleted/moved: {not_found_count}")
-        
+
         if permission_denied_count > 0:
-            print(f"❌ Permission denied for {permission_denied_count} repositories")
+            print(f"❌ Permission denied for {permission_denied_count} "
+                  f"repositories")
             if permission_denied_count <= 5:
                 for repo in failed_repos[:permission_denied_count]:
                     print(f"   • {repo}")
             print("\n💡 This indicates insufficient token permissions.")
             print("   Please ensure your GitHub token has 'user' scope.")
             return False
-            
+
         if failed_count > 0:
             print(f"❌ Other failures: {failed_count} repositories")
             if failed_count <= 3:
-                remaining_failed = [r for r in failed_repos if r not in failed_repos[:permission_denied_count]]
+                remaining_failed = [
+                    r for r in failed_repos
+                    if r not in failed_repos[:permission_denied_count]
+                ]
                 for repo in remaining_failed[:3]:
                     print(f"   • {repo}")
-                    
+
         return True
 
 
@@ -348,7 +332,7 @@ def main():
     """Main function to run the GitHub star cleanup."""
     # Load environment variables from .env file
     load_env_file()
-    
+
     # Try to get token from environment variable first, then fallback
     GITHUB_TOKEN = os.getenv('GITHUB_TOKEN', 'your_github_token_here')
 
