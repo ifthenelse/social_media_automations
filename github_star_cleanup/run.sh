@@ -13,10 +13,10 @@ if [ ! -d "venv" ]; then
 fi
 
 # Check if .env file exists
-if [ ! -f "../.env" ]; then
+if [ ! -f ".env" ]; then
     echo "❌ .env file not found. Please create it from the example:"
-    echo "   cp ../.env.example ../.env"
-    echo "   # Then edit ../.env and add your GitHub token"
+    echo "   cp .env.example .env"
+    echo "   # Then edit .env and add your GitHub token"
     exit 1
 fi
 

@@ -29,8 +29,8 @@ setup:
 	$(VENV)/bin/pip install --upgrade pip
 	$(VENV)/bin/pip install -r requirements.txt
 	@echo "Setup complete! Next steps:"
-	@echo "1. cp ../.env.example ../.env"
-	@echo "2. Edit ../.env with your GitHub token"
+	@echo "1. cp .env.example .env"
+	@echo "2. Edit .env with your GitHub token"
 	@echo "3. make run"
 
 # Install or update dependencies
@@ -44,8 +44,8 @@ run:
 		echo "Virtual environment not found. Run 'make setup' first."; \
 		exit 1; \
 	fi
-	@if [ ! -f "../.env" ]; then \
-		echo ".env file not found. Copy ../.env.example to ../.env and add your token."; \
+	@if [ ! -f ".env" ]; then \
+		echo ".env file not found. Copy .env.example to .env and add your token."; \
 		exit 1; \
 	fi
 	$(VENV)/bin/python github_star_cleanup_clean.py
