@@ -5,30 +5,22 @@
 
 set -e # Exit on any error
 
+# Source utility functions
+source "$(dirname "$0")/utils.sh"
+
 echo "🌟 GitHub Star Cleanup Setup"
 echo "=============================="
 
-# Check if Python 3 is installed
-if ! command -v python3 &>/dev/null; then
-    echo "❌ Python 3 is not installed. Please install Python 3.8 or later."
-    echo "   You can download it from: https://www.python.org/downloads/"
-    exit 1
-fi
-
-# Check Python version
-PYTHON_VERSION=$(python3 -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')")
-echo "✅ Found Python $PYTHON_VERSION"
-
-# Check if version is 3.8 or later
-if ! python3 -c "import sys; sys.exit(0 if sys.version_info >= (3, 8) else 1)" 2>/dev/null; then
-    echo "❌ Python 3.8 or later is required. Found Python $PYTHON_VERSION"
+# Check if Python 3 is installed and validate version
+PYTHON_CMD=$(validate_python_version)
+if [ $? -ne 0 ]; then
     exit 1
 fi
 
 # Create virtual environment if it doesn't exist
 if [ ! -d "venv" ]; then
     echo "📦 Creating virtual environment..."
-    python3 -m venv venv
+    $PYTHON_CMD -m venv venv
     echo "✅ Virtual environment created"
 else
     echo "✅ Virtual environment already exists"

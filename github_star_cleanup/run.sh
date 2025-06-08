@@ -5,6 +5,15 @@
 
 set -e
 
+# Source utility functions
+source "$(dirname "$0")/utils.sh"
+
+# Validate Python installation and version
+PYTHON_CMD=$(validate_python_version)
+if [ $? -ne 0 ]; then
+    exit 1
+fi
+
 # Check if virtual environment exists
 if [ ! -d "venv" ]; then
     echo "❌ Virtual environment not found. Please run setup.sh first:"
@@ -23,4 +32,6 @@ fi
 # Activate virtual environment and run the script
 echo "🚀 Running GitHub Star Cleanup..."
 source venv/bin/activate
-python github_star_cleanup.py
+
+# Run the script with the validated Python command
+$PYTHON_CMD github_star_cleanup.py
