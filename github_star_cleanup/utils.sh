@@ -35,11 +35,11 @@ validate_python_version() {
 
     # Check Python version
     local python_version=$($python_cmd -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')")
-    echo "✅ Found Python $python_version"
+    echo "✅ Found Python $python_version" >&2
 
     # Check if version is 3.8 or later
     if ! $python_cmd -c "import sys; sys.exit(0 if sys.version_info >= (3, 8) else 1)" 2>/dev/null; then
-        echo "❌ Python 3.8 or later is required. Found Python $python_version"
+        echo "❌ Python 3.8 or later is required. Found Python $python_version" >&2
         return 1
     fi
 
