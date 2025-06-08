@@ -1,0 +1,74 @@
+{
+    "folders": [
+        {
+            "name": "GitHub Star Cleanup",
+            "path": "."
+        }
+    ],
+    "settings": {
+        // Workspace-level settings that override user settings
+        "python.defaultInterpreterPath": "./github_star_cleanup/venv/bin/python",
+        "workbench.colorTheme": "Default Dark+",
+        "workbench.iconTheme": "vs-seti",
+        // Restrict Python development to this workspace
+        "python.analysis.extraPaths": [
+            "./github_star_cleanup"
+        ],
+        "python.analysis.include": [
+            "./github_star_cleanup"
+        ],
+        "python.analysis.exclude": [
+            "**/node_modules",
+            "**/.venv",
+            "**/venv/lib"
+        ],
+        // Workspace-specific extension behavior
+        "extensions.autoCheckUpdates": false,
+        "extensions.ignoreRecommendations": false
+    },
+    "extensions": {
+        "recommendations": [
+            "ms-python.python",
+            "ms-python.debugpy",
+            "ms-python.flake8",
+            "ms-python.black-formatter",
+            "ms-python.isort",
+            "ms-python.vscode-pylance",
+            "github.vscode-pull-request-github",
+            "mikestead.dotenv",
+            "njpwerner.autodocstring",
+            "ms-vscode.vscode-json",
+            "yzhang.markdown-all-in-one",
+            "ms-vscode.makefile-tools"
+        ],
+        "unwantedRecommendations": [
+            "ms-python.pylint",
+            "ms-python.autopep8",
+            "ms-vscode.cpptools",
+            "ms-dotnettools.csharp",
+            "golang.go",
+            "rust-lang.rust-analyzer",
+            "ms-vscode.vscode-typescript-next"
+        ]
+    },
+    "tasks": {
+        "version": "2.0.0",
+        "tasks": [
+            {
+                "label": "Setup Project Environment",
+                "type": "shell",
+                "command": "make",
+                "args": [
+                    "setup"
+                ],
+                "group": "build",
+                "presentation": {
+                    "echo": true,
+                    "reveal": "always",
+                    "panel": "new"
+                },
+                "problemMatcher": []
+            }
+        ]
+    }
+}
