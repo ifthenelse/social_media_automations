@@ -20,7 +20,7 @@
         "PYTHONPATH": "${workspaceFolder}/github_star_cleanup"
     },
     // Python Configuration - Workspace specific
-    "python.defaultInterpreterPath": "./github_star_cleanup/venv/bin/python",
+    "python.defaultInterpreterPath": "./venv/bin/python",
     "python.terminal.activateEnvironment": true,
     "python.analysis.autoImportCompletions": true,
     "python.analysis.typeCheckingMode": "basic",
@@ -112,5 +112,10 @@
     "pylance.enabled": true,
     "flake8.enabled": true,
     "black-formatter.enabled": true,
-    "isort.enabled": true
+    "isort.enabled": true,
+    // Python interpreter settings for different projects
+    "python.analysis.extraPaths": [
+        "./github_star_cleanup",
+        "./instagram_following_cleanup/src"
+    ]
 }

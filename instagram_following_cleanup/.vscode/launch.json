@@ -1,0 +1,17 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Instagram Cleanup",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/instagram_cleanup.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "python": "${workspaceFolder}/venv/bin/python",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src"
+            }
+        }
+    ]
+}
